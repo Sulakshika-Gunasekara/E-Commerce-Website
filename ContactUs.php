@@ -7,6 +7,38 @@
     <link rel="stylesheet" type="text/css" href="Main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
+    <script type="text/javascript">
+function validateForm(){
+var name=document.getElementById("name").value;
+var validname= /^[a-zA-Z]+[a-zA-Z]+$/;
+var number=document.getElementById("number").value;
+var validnumber=/^\d{10}$/;
+var email=document.getElementById("email").value;
+var validemail=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+if(!validname.test(name)){
+    alert("Please enter a valid name");
+    return false;
+}
+
+
+if(!validnumber.test(number))
+{
+  alert("Please enter a valid Phone Number");
+  return false;
+}
+
+if(!validemail.test(email))
+{
+  alert("Please enter a valid email");
+  return false;
+} 
+ 
+return true;
+
+}
+</script>
+
 </head>
 <body>
     <div class="nav">
@@ -67,11 +99,11 @@
 
     <div class="contact">
         <h2>Contact Us</h2>
-        <form class="contact-form">
-            <input type="text" placeholder="Your Name" required>
-            <input type="email" placeholder="Your Email" required>
-            <input type="text" placeholder="Phone Number" required>
-            <textarea placeholder="Your Message" required></textarea>
+        <form class="contact-form" method="POST" action="submit_feedback.php" onsubmit="return validateForm()">
+            <input type="text" placeholder="Your Name" name="name" id="name" required>
+            <input type="email" placeholder="Your Email" name="email" id="email" required>
+            <input type="text" placeholder="Phone Number" name="phone" id="phone" required>
+            <textarea placeholder="Your Message" name="message" id="message" required></textarea>
             <button type="submit">Send Message</button>
         </form>
         
