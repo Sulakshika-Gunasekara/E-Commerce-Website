@@ -46,7 +46,7 @@
                     </div>
                     <div class="checkout-btn">
                         <span><button id="close" class="btn">Close</button></span>
-                        <span><button id="proceed" class="btn">Checkout</button></span>
+                        <span><a  href="CheckOut.php"><button id="proceed" class="btn">Checkout</button></a></span>
                     </div>
                 </div>
             </div>
@@ -65,7 +65,7 @@
                   
        
                     <a href="#" id="cart"><img src="Images/shopping-cart.png" height="30" width="30"></a>
-                    <a href="Account.php"><img src="Images/user.png" height="30" width="30"></a>
+                    <a href="CheckOut.php"><img src="Images/user.png" height="30" width="30"></a>
                 </div>
                 
             </div>
