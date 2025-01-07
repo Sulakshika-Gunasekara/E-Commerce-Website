@@ -47,6 +47,7 @@ return true;
             <a href="Index.php"><button type="button">HOME</button></a>
             <a href="Product.php"><button type="button">PRODUCT</button></a>
             <a href="ContactUs.php"><button type="button">CONTACT US</button></a>
+           
         </div>
     </div>
 
