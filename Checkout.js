@@ -1,309 +1,169 @@
-//change country flag and discountrate on select
-const selected = document.querySelector("#country");
-const countryImg = document.querySelector(".country-img");
-
-const orderSummary = JSON.parse(localStorage.getItem("items"));
-
-const stateOfValues = {
-    "discount": 10,
-    "deliveryFee": 10,
-    "totalWithoutDisc": 0,
-    "deliveryMethod": "Express"
-};
-
-//create order summery
-function createOrder(order) {
-
-    //calculate total
-    let total = 0;
-
-    order.forEach(element => {
-        const itmImage = document.createElement("img");
-        itmImage.classList.add("item-container-image");
-        itmImage.src = element.image;
-
-        const itemDetail = document.createElement("div");
-        itemDetail.classList.add("item-container-details");
-
-        const itemHeader = document.createElement("div");
-        itemHeader.classList.add("container-detail-header");
-        itemHeader.innerText = element.title;
-
-        const itmAttrbutes = document.createElement("div");
-        itmAttrbutes.classList.add("container-detail-attr");
-
-        if (element.hasSize) {
-            const attrKey = document.createElement("div");
-            attrKey.classList.add("attr-key");
-            attrKey.innerText = "Size";
-            const attrVal = document.createElement("div");
-            attrVal.classList.add("attr-value");
-
-            let temp = "1";
-
-            switch (element.size) {
-                case "1":
-                    temp = "Small"
-                    break;
-                case "2":
-                    temp = "Medium"
-                    break
-                case "3":
-                    temp = "Large"
-                    break
-                case "4":
-                    temp = "XL"
-                    break
-                case "5":
-                    temp = "XXL"
-                    break
-
-                default:
-                    break;
-            }
-
-            attrVal.innerText = temp;
-            itmAttrbutes.append(attrKey, attrVal);
-        }
-
-        const wrapperDiv = document.createElement("div");
-        const itmPrice = document.createElement("div");
-        itmPrice.classList.add("item-price");
-        itmPrice.innerText = `$${element.price} `;
-
-        const numOfItms = document.createElement("div");
-        numOfItms.classList.add("num-of-items")
-        numOfItms.innerText = `× 0${element.numOfItems}`;
-
-        wrapperDiv.append(itmPrice, numOfItms);
-        itemDetail.append(itemHeader, itmAttrbutes, wrapperDiv);
-
-        const itemContainer = document.createElement("div");
-        itemContainer.classList.add("item-container");
-        itemContainer.append(itmImage, itemDetail);
-
-        document.querySelector("#margin").insertAdjacentElement("afterend", itemContainer);
-        itemContainer.insertAdjacentElement("afterend", document.createElement("hr"));
-
-        total = total + (element.price * element.numOfItems);
-    });
-
-    stateOfValues.totalWithoutDisc = total;
-};
-
-function calculateTotal(discount, fee, total, method) {
-    const costs = document.querySelectorAll(".amount");
-    costs[0].innerText = `$${fee}`;
-    costs[1].innerText = `-$${discount}`;
-
-    document.querySelector("#delivery-method").innerText = method;
-    let tempTot = total + fee - discount;
-
-    document.querySelector("#total-amount").innerText = `$${tempTot}`;
-
-}
-
-if (orderSummary == null) {
-    alert("Empty shoppin cart")
-    document.querySelector("#sub-btn").disabled = true;
-} else {
-    createOrder(orderSummary);
-    calculateTotal(stateOfValues.discount, stateOfValues.deliveryFee, stateOfValues.totalWithoutDisc, stateOfValues.deliveryMethod);
-
-}
-
-
-//change country flags in form and discount rates and shipping charge
-selected.addEventListener("change", function (e) {
-    if (e.target.value === "SL") {
-        countryImg.src = "../images/student-one/checkout/srilanka.png";
-        calculateTotal(stateOfValues.discount, stateOfValues.deliveryFee, stateOfValues.totalWithoutDisc, stateOfValues.deliveryMethod);
-    } else if (e.target.value === "IN") {
-        countryImg.src = "../images/student-one/checkout/india.png";
-        calculateTotal(4, 13, stateOfValues.totalWithoutDisc, "Air Shipping");
-    } else if (e.target.value === "JP") {
-        countryImg.src = "../images/student-one/checkout/japan.png";
-        calculateTotal(9, 15, stateOfValues.totalWithoutDisc, "Air Shipping");
-    } else if (e.target.value === "UK") {
-        countryImg.src = "../images/student-one/checkout/uk.png";
-        calculateTotal(8, 19, stateOfValues.totalWithoutDisc, "Air Shipping");
-    } else {
-        countryImg.src = "../images/student-one/checkout/united-states.png";
-        calculateTotal(19, 20, stateOfValues.totalWithoutDisc, "Air Shipping");
-    }
-});
-
-//forms
-const billDetailsForm = document.querySelector("#bil-details");
-const paymentDetails = document.querySelector("#payment-details");
-
-
-//input validation
 function validation() {
     let hasError = false;
-    //regular exprression for check numbers only in input field
+    // Clear previous errors
+    let existingErrors = document.querySelectorAll(".error");
+    existingErrors.forEach(element => {
+        element.remove();
+    });
+    
+    //regular expressions for validation
     const numbers = /^[0-9]+$/;
     const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-
-    const formBilDetails = document.getElementById("bil-details");
-    const formContactDetails = document.getElementById("contact-details");
-    const paymentDetails = document.getElementById("payment-details");
-
+    
+    const checkoutForm = document.getElementById("checkout-form");
+    
     //check input fields
-    let fName = formBilDetails.elements['fname'].value;
-    let errorFname = document.createElement("div");
-    errorFname.classList.add("error");
+    let fName = checkoutForm.elements['fname'].value;
     if (fName == "") {
         hasError = true;
-        errorFname.innerText = "First-Name Required"
+        let errorFname = document.createElement("div");
+        errorFname.classList.add("error");
+        errorFname.innerText = "First-Name Required";
         document.querySelector("#fname").after(errorFname);
     }
-
-    let lname = formBilDetails.elements['lname'].value;
-    let errorLname = document.createElement("div");
-    errorLname.classList.add("error");
-    if (lname == "") {
+    
+    let lName = checkoutForm.elements['lname'].value;
+    if (lName == "") {
         hasError = true;
-        errorLname.innerText = "Last-Name Required"
+        let errorLname = document.createElement("div");
+        errorLname.classList.add("error");
+        errorLname.innerText = "Last-Name Required";
         document.querySelector("#lname").after(errorLname);
     }
-
-    let address = formBilDetails.elements['adress'].value;
-    let errorAddress = document.createElement("div");
-    errorAddress.classList.add("error");
+    
+    let address = checkoutForm.elements['adress'].value;
     if (address == "") {
         hasError = true;
-        errorAddress.innerText = "Address Required"
+        let errorAddress = document.createElement("div");
+        errorAddress.classList.add("error");
+        errorAddress.innerText = "Address Required";
         document.querySelector("#address").after(errorAddress);
     }
-
-    let city = formBilDetails.elements['city'].value;
-    let errorCity = document.createElement("div");
-    errorCity.classList.add("error");
+    
+    let city = checkoutForm.elements['city'].value;
     if (city == "") {
         hasError = true;
-        errorCity.innerText = "City Required"
+        let errorCity = document.createElement("div");
+        errorCity.classList.add("error");
+        errorCity.innerText = "City Required";
         document.querySelector("#city").after(errorCity);
     }
-
-    let postalCode = formBilDetails.elements['postal'].value;
-    let errorPostal = document.createElement("div");
-    errorPostal.classList.add("error");
-    if (postalCode == "") {
+    
+    let postal = checkoutForm.elements['postal'].value;
+    if (postal == "") {
         hasError = true;
-        errorPostal.innerText = "Postal Code Required"
+        let errorPostal = document.createElement("div");
+        errorPostal.classList.add("error");
+        errorPostal.innerText = "Postal-Code Required";
         document.querySelector("#postal").after(errorPostal);
-    } else if (postalCode.match(numbers) == null) {
+    } else if (!postal.match(numbers)) {
         hasError = true;
-        errorPostal.innerText = "Invalid Postal Code";
+        let errorPostal = document.createElement("div");
+        errorPostal.classList.add("error");
+        errorPostal.innerText = "Numbers Only!";
         document.querySelector("#postal").after(errorPostal);
     }
-
-    let nameONCard = paymentDetails.elements['nOnCard'].value;
-    let errorNameONCardNumber = document.createElement("div");
-    errorNameONCardNumber.classList.add("error");
-    if (nameONCard == "") {
+    
+    let contact = checkoutForm.elements['contact'].value;
+    if (contact == "") {
         hasError = true;
-        errorNameONCardNumber.innerText = "Card Holders Name Required";
-        document.querySelector("#nOnCard").after(errorNameONCardNumber);
+        let errorContact = document.createElement("div");
+        errorContact.classList.add("error");
+        errorContact.innerText = "Contact Required";
+        document.querySelector("#contact").after(errorContact);
+    } else if (!contact.match(numbers)) {
+        hasError = true;
+        let errorContact = document.createElement("div");
+        errorContact.classList.add("error");
+        errorContact.innerText = "Numbers Only!";
+        document.querySelector("#contact").after(errorContact);
     }
-
-    let cardNumber = paymentDetails.elements['cardNumber'].value;
-    let errorCardNumber = document.createElement("div");
-    errorCardNumber.classList.add("error");
+    
+    let email = checkoutForm.elements['email'].value;
+    if (email == "") {
+        hasError = true;
+        let errorEmail = document.createElement("div");
+        errorEmail.classList.add("error");
+        errorEmail.innerText = "Email Required";
+        document.querySelector("#email").after(errorEmail);
+    } else if (!email.match(emailPattern)) {
+        hasError = true;
+        let errorEmail = document.createElement("div");
+        errorEmail.classList.add("error");
+        errorEmail.innerText = "Invalid Email Format";
+        document.querySelector("#email").after(errorEmail);
+    }
+    
+    let cardName = checkoutForm.elements['nOnCard'].value;
+    if (cardName == "") {
+        hasError = true;
+        let errorCardName = document.createElement("div");
+        errorCardName.classList.add("error");
+        errorCardName.innerText = "Card Name Required";
+        document.querySelector("#nOnCard").after(errorCardName);
+    }
+    
+    let cardNumber = checkoutForm.elements['cardNumber'].value;
     if (cardNumber == "") {
         hasError = true;
-        errorCardNumber.innerText = "Card Number Required"
+        let errorCardNumber = document.createElement("div");
+        errorCardNumber.classList.add("error");
+        errorCardNumber.innerText = "Card Number Required";
         document.querySelector("#cardNumber").after(errorCardNumber);
-    } else if (cardNumber.match(numbers) == null) {
+    } else if (!cardNumber.match(numbers)) {
         hasError = true;
-        errorCardNumber.innerText = "Invalid format of card number";
+        let errorCardNumber = document.createElement("div");
+        errorCardNumber.classList.add("error");
+        errorCardNumber.innerText = "Numbers Only!";
+        document.querySelector("#cardNumber").after(errorCardNumber);
+    } else if (cardNumber.length != 16) {
+        hasError = true;
+        let errorCardNumber = document.createElement("div");
+        errorCardNumber.classList.add("error");
+        errorCardNumber.innerText = "Card Number must be 16 digits!";
         document.querySelector("#cardNumber").after(errorCardNumber);
     }
-
-    let expDate = paymentDetails.elements['expDate'].value;
-    let errorExpDate = document.createElement("div");
-    errorExpDate.classList.add("error");
-    if (new Date(expDate) <= new Date()) {
+    
+    let expDate = checkoutForm.elements['expDate'].value;
+    if (expDate == "") {
         hasError = true;
-        errorExpDate.innerText = "Card Expired"
+        let errorExpDate = document.createElement("div");
+        errorExpDate.classList.add("error");
+        errorExpDate.innerText = "Expiry Date Required";
         document.querySelector("#expDate").after(errorExpDate);
     }
-
-    let cvv = paymentDetails.elements['cvv'].value;
-    let errorCVV = document.createElement("div");
-    errorCVV.classList.add("error");
+    
+    let cvv = checkoutForm.elements['cvv'].value;
     if (cvv == "") {
         hasError = true;
-        errorCVV.innerText = "CVV Number Required"
-        document.querySelector("#cvv").after(errorCVV);
-    } else if (cvv.match(numbers) == null) {
+        let errorCvv = document.createElement("div");
+        errorCvv.classList.add("error");
+        errorCvv.innerText = "CVV Required";
+        document.querySelector("#cvv").after(errorCvv);
+    } else if (!cvv.match(numbers)) {
         hasError = true;
-        errorCVV.innerText = "Invalid format of CVV number";
-        document.querySelector("#cvv").after(errorCVV);
-    }
-
-    let conNumber = formContactDetails.elements['contact'].value;
-    let errorConNum = document.createElement("div");
-    errorConNum.classList.add("error");
-    if (conNumber == "") {
+        let errorCvv = document.createElement("div");
+        errorCvv.classList.add("error");
+        errorCvv.innerText = "Numbers Only!";
+        document.querySelector("#cvv").after(errorCvv);
+    } else if (cvv.length != 3) {
         hasError = true;
-        errorConNum.innerText = "Contact Number Required";
-        document.querySelector("#contact").after(errorConNum)
+        let errorCvv = document.createElement("div");
+        errorCvv.classList.add("error");
+        errorCvv.innerText = "CVV must be 3 digits!";
+        document.querySelector("#cvv").after(errorCvv);
     }
-
-    let email = formContactDetails.elements['email'].value;
-    let errorEmail = document.createElement("div");
-    errorEmail.classList.add("error");
-    if (email.match(emailPattern) == null) {
-        hasError = true;
-        errorEmail.innerText = "Invalid Email Address";
-        document.querySelector("#email").after(errorEmail)
-    }
-
-
-
-    if (!hasError) {
-        alert("Payment succesfull");
-       
-        localStorage.clear();
-    }
-
-
+    
+    // If there are no errors, let the form submit normally
+    return !hasError;
 }
 
-//submit on enter if cart is not empty
-if (!(orderSummary == null)) {
-    window.addEventListener("keyup", function (e) {
+// Add event listener for Cancel button
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('Cancel-btn').addEventListener('click', function(e) {
         e.preventDefault();
-        if (e.key == "Enter") {
-            let temp = document.querySelectorAll(".error");
-            if (temp.length > 0) {
-                temp.forEach(element => {
-                    element.remove();
-                })
-            }
-            validation();
+        if (confirm('Are you sure you want to cancel this order?')) {
+            window.location.href = 'Product.php';
         }
     });
-}
-
-
-//submit button
-const submitBtn = document.querySelector("#sub-btn");
-submitBtn.addEventListener("click", function () {
-    let temp = document.querySelectorAll(".error");
-    if (temp.length > 0) {
-        temp.forEach(element => {
-            element.remove();
-        })
-    }
-    validation();
-});
-
-//cancle button
-const cancleBtn = document.querySelector("#Cancel-btn");
-cancleBtn.addEventListener("click", function (e) {
-    localStorage.clear();
-    window.location.href = "Product.html";
 });
